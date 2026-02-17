@@ -5,11 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>تهنئة رمضان</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
-
 <style>
 
-/* 🔥 تعريف الخط الخاص */
+/* 🔥 تعريف خطك الخاص */
 @font-face {
   font-family: 'YearHandicrafts';
   src: url('The YearofHandicrafts-Regular.otf') format('opentype');
@@ -23,10 +21,10 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
-  font-family:'Cairo', sans-serif;
   background-image:url("BackGround.jpg");
   background-size:cover;
   background-position:center;
+  font-family:sans-serif;
 }
 
 body::before{
@@ -96,11 +94,14 @@ button{
 <script>
 const canvas = document.getElementById("cardCanvas");
 const ctx = canvas.getContext("2d");
+
+/* 🔥 اسم صورتك الجديد */
 const img = new Image();
-img.src = "ramadan.png";
+img.src = "RaCa.png";
 
 /* 📍 مكان الاسم فوق الخط */
-const NAME_Y_RATIO = 0.64;
+const NAME_Y_RATIO = 0.74
+;
 
 /* حجم الخط */
 const MAX_FONT = 70;
@@ -110,7 +111,6 @@ img.onload = () => {
   canvas.width = img.width;
   canvas.height = img.height;
 
-  // ننتظر تحميل الخط قبل الرسم
   document.fonts.ready.then(() => {
     autoFromURL();
   });
