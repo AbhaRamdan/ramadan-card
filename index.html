@@ -4,9 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>تهنئة رمضان</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
 
 <style>
+
+/* 🔥 تعريف الخط الخاص */
+@font-face {
+  font-family: 'YearHandicrafts';
+  src: url('The YearofHandicrafts-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body{
   margin:0;
   min-height:100vh;
@@ -19,37 +29,54 @@ body{
   background-position:center;
 }
 
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.25);
+  z-index:-1;
+}
+
 .wrapper{
-  background:rgba(0,0,0,0.4);
-  padding:20px;
+  width:min(620px,92vw);
+  background:rgba(255,255,255,0.08);
   border-radius:20px;
+  padding:18px;
+  backdrop-filter:blur(10px);
+  box-shadow:0 25px 60px rgba(0,0,0,.3);
   text-align:center;
 }
 
 canvas{
-  max-width:100%;
-  border-radius:15px;
+  width:100%;
+  border-radius:16px;
 }
 
 .controls{
-  margin-top:15px;
+  margin-top:14px;
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
 }
 
 input{
-  padding:10px;
-  border-radius:8px;
+  padding:12px;
+  border-radius:10px;
   border:none;
   font-size:16px;
+  width:220px;
 }
 
 button{
-  padding:10px 20px;
+  padding:12px 18px;
+  border-radius:10px;
   border:none;
-  border-radius:8px;
-  margin:5px;
   cursor:pointer;
-  font-weight:bold;
+  font-weight:700;
+  background:#fff;
 }
+
 </style>
 </head>
 
@@ -59,9 +86,10 @@ button{
   <canvas id="cardCanvas"></canvas>
 
   <div class="controls">
-    <input type="text" id="nameInput" placeholder="اكتب اسمك">
-    <button onclick="generateImage()">عرض</button>
+    <input id="nameInput" placeholder="اكتب اسمك">
+    <button onclick="generate()">عرض</button>
     <button onclick="downloadImage()">تحميل الصورة</button>
+    <button onclick="shareWhatsApp()">مشاركة واتساب</button>
   </div>
 </div>
 
@@ -71,30 +99,85 @@ const ctx = canvas.getContext("2d");
 const img = new Image();
 img.src = "ramadan.png";
 
-img.onload = function(){
+/* 📍 مكان الاسم فوق الخط */
+const NAME_Y_RATIO = 0.64;
+
+/* حجم الخط */
+const MAX_FONT = 70;
+const MIN_FONT = 36;
+
+img.onload = () => {
   canvas.width = img.width;
   canvas.height = img.height;
-  ctx.drawImage(img,0,0);
+
+  // ننتظر تحميل الخط قبل الرسم
+  document.fonts.ready.then(() => {
+    autoFromURL();
+  });
+};
+
+function autoFromURL(){
+  const params = new URLSearchParams(window.location.search);
+  const name = params.get("name");
+  if(name){
+    document.getElementById("nameInput").value = name;
+    draw(name);
+  } else {
+    draw("");
+  }
 }
 
-function generateImage(){
-  const name = document.getElementById("nameInput").value;
+function draw(name){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   ctx.drawImage(img,0,0);
 
-  ctx.font = "bold 60px Cairo";
-  ctx.fillStyle = "#ffffff";
-  ctx.textAlign = "center";
+  if(!name) return;
 
-  // 👇 مكان الاسم فوق الخط (عدل الرقم لو احتجت)
-  ctx.fillText(name, canvas.width/2, canvas.height * 0.75);
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
+  ctx.fillStyle="#0c3c78";
+
+  ctx.shadowColor="rgba(0,0,0,.3)";
+  ctx.shadowBlur=12;
+  ctx.shadowOffsetY=4;
+
+  let size = MAX_FONT;
+  const maxWidth = canvas.width*0.78;
+
+  while(size>=MIN_FONT){
+    ctx.font=`${size}px 'YearHandicrafts'`;
+    if(ctx.measureText(name).width<=maxWidth) break;
+    size-=2;
+  }
+
+  ctx.fillText(name,canvas.width/2,canvas.height*NAME_Y_RATIO);
+
+  ctx.shadowColor="transparent";
+}
+
+function generate(){
+  const name=document.getElementById("nameInput").value.trim();
+  if(!name){ alert("اكتب الاسم أولاً"); return; }
+  draw(name);
 }
 
 function downloadImage(){
-  const link = document.createElement("a");
-  link.download = "ramadan-card.png";
-  link.href = canvas.toDataURL("image/png");
-  link.click();
+  const name=document.getElementById("nameInput").value.trim();
+  if(!name){ alert("اكتب الاسم أولاً"); return; }
+  draw(name);
+  const a=document.createElement("a");
+  a.download=`${name}-ramadan.png`;
+  a.href=canvas.toDataURL("image/png");
+  a.click();
+}
+
+function shareWhatsApp(){
+  const name=document.getElementById("nameInput").value.trim();
+  if(!name){ alert("اكتب الاسم أولاً"); return; }
+
+  const url = `${location.origin}${location.pathname}?name=${encodeURIComponent(name)}`;
+  const text = `رمضان مبارك 🌙✨\nشوف تهنئتك باسمك:\n${url}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`,"_blank");
 }
 </script>
 
