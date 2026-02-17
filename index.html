@@ -1,134 +1,101 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>تهنئة رمضان</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
 
 <style>
-  :root{
-    --cardW: 560px; /* عرض الكرت */
-  }
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'Cairo', sans-serif;
+  background-image:url("BackGround.jpg");
+  background-size:cover;
+  background-position:center;
+}
 
-  body{
-    margin:0;
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-family:'Cairo', sans-serif;
+.wrapper{
+  background:rgba(0,0,0,0.4);
+  padding:20px;
+  border-radius:20px;
+  text-align:center;
+}
 
-    /* خلفية الموقع */
-    background-image: url("BackGround.jpg");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
+canvas{
+  max-width:100%;
+  border-radius:15px;
+}
 
-  /* طبقة تغميق فوق الخلفية عشان يبرز المحتوى */
-  body::before{
-    content:"";
-    position:fixed;
-    inset:0;
-    background: rgba(0,0,0,0.35);
-    backdrop-filter: blur(2px);
-    z-index:-1;
-  }
+.controls{
+  margin-top:15px;
+}
 
-  .wrapper{
-    width:min(var(--cardW), 92vw);
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 20px;
-    padding: 18px;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.35);
-    backdrop-filter: blur(10px);
-  }
+input{
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  font-size:16px;
+}
 
-  .card{
-    position:relative;
-    width:100%;
-    border-radius: 16px;
-    overflow:hidden;
-  }
-
-  .card img{
-    width:100%;
-    display:block;
-  }
-
-  /* الاسم فوق الخط */
-  .name{
-    position:absolute;
-
-    /* 👇 هذي أهم قيمة: مكان الاسم (فوق الخط) */
-    bottom: 30.5%;
-
-    left:50%;
-    transform: translateX(-50%);
-    color:#fff;
-    font-size: clamp(22px, 4.2vw, 42px);
-    font-weight:700;
-    text-shadow: 0 8px 18px rgba(0,0,0,0.55);
-    white-space: nowrap;
-    padding: 0 10px;
-  }
-
-  .controls{
-    margin-top: 14px;
-    display:flex;
-    gap:10px;
-    align-items:center;
-    justify-content:center;
-    flex-wrap: wrap;
-  }
-
-  input{
-    width: min(320px, 78vw);
-    padding: 12px 14px;
-    border-radius: 10px;
-    border: none;
-    outline: none;
-    font-size: 16px;
-  }
-
-  button{
-    padding: 12px 18px;
-    border-radius: 10px;
-    border:none;
-    cursor:pointer;
-    font-weight:700;
-    background:#ffffff;
-  }
+button{
+  padding:10px 20px;
+  border:none;
+  border-radius:8px;
+  margin:5px;
+  cursor:pointer;
+  font-weight:bold;
+}
 </style>
 </head>
 
 <body>
 
-  <div class="wrapper">
-    <div class="card">
-      <img src="ramadan.png" alt="Ramadan Card">
-      <div class="name" id="nameText"></div>
-    </div>
+<div class="wrapper">
+  <canvas id="cardCanvas"></canvas>
 
-    <div class="controls">
-      <input id="nameInput" type="text" placeholder="اكتب اسمك" />
-      <button onclick="updateName()">إظهار الاسم</button>
-      <button onclick="clearName()">مسح</button>
-    </div>
+  <div class="controls">
+    <input type="text" id="nameInput" placeholder="اكتب اسمك">
+    <button onclick="generateImage()">عرض</button>
+    <button onclick="downloadImage()">تحميل الصورة</button>
   </div>
+</div>
 
 <script>
-  function updateName(){
-    const name = document.getElementById("nameInput").value.trim();
-    document.getElementById("nameText").textContent = name;
-  }
-  function clearName(){
-    document.getElementById("nameInput").value = "";
-    document.getElementById("nameText").textContent = "";
-  }
+const canvas = document.getElementById("cardCanvas");
+const ctx = canvas.getContext("2d");
+const img = new Image();
+img.src = "ramadan.png";
+
+img.onload = function(){
+  canvas.width = img.width;
+  canvas.height = img.height;
+  ctx.drawImage(img,0,0);
+}
+
+function generateImage(){
+  const name = document.getElementById("nameInput").value;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(img,0,0);
+
+  ctx.font = "bold 60px Cairo";
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "center";
+
+  // 👇 مكان الاسم فوق الخط (عدل الرقم لو احتجت)
+  ctx.fillText(name, canvas.width/2, canvas.height * 0.75);
+}
+
+function downloadImage(){
+  const link = document.createElement("a");
+  link.download = "ramadan-card.png";
+  link.href = canvas.toDataURL("image/png");
+  link.click();
+}
 </script>
 
 </body>
