@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>تهنئة رمضان</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --cardW: 560px; /* عرض الكرت */
+  }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Cairo', sans-serif;
+
+    /* خلفية الموقع */
+    background-image: url("BackGround.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  /* طبقة تغميق فوق الخلفية عشان يبرز المحتوى */
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(2px);
+    z-index:-1;
+  }
+
+  .wrapper{
+    width:min(var(--cardW), 92vw);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 18px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.35);
+    backdrop-filter: blur(10px);
+  }
+
+  .card{
+    position:relative;
+    width:100%;
+    border-radius: 16px;
+    overflow:hidden;
+  }
+
+  .card img{
+    width:100%;
+    display:block;
+  }
+
+  /* الاسم فوق الخط */
+  .name{
+    position:absolute;
+
+    /* 👇 هذي أهم قيمة: مكان الاسم (فوق الخط) */
+    bottom: 30.5%;
+
+    left:50%;
+    transform: translateX(-50%);
+    color:#fff;
+    font-size: clamp(22px, 4.2vw, 42px);
+    font-weight:700;
+    text-shadow: 0 8px 18px rgba(0,0,0,0.55);
+    white-space: nowrap;
+    padding: 0 10px;
+  }
+
+  .controls{
+    margin-top: 14px;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    justify-content:center;
+    flex-wrap: wrap;
+  }
+
+  input{
+    width: min(320px, 78vw);
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+  }
+
+  button{
+    padding: 12px 18px;
+    border-radius: 10px;
+    border:none;
+    cursor:pointer;
+    font-weight:700;
+    background:#ffffff;
+  }
+</style>
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <div class="card">
+      <img src="ramadan.png" alt="Ramadan Card">
+      <div class="name" id="nameText"></div>
+    </div>
+
+    <div class="controls">
+      <input id="nameInput" type="text" placeholder="اكتب اسمك" />
+      <button onclick="updateName()">إظهار الاسم</button>
+      <button onclick="clearName()">مسح</button>
+    </div>
+  </div>
+
+<script>
+  function updateName(){
+    const name = document.getElementById("nameInput").value.trim();
+    document.getElementById("nameText").textContent = name;
+  }
+  function clearName(){
+    document.getElementById("nameInput").value = "";
+    document.getElementById("nameText").textContent = "";
+  }
+</script>
+
+</body>
+</html>
