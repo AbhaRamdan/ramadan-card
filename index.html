@@ -1,111 +1,16 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تهنئة رمضان</title>
-
-<style>
-
-/* 🔥 تعريف خطك الخاص */
-@font-face {
-  font-family: 'YearHandicrafts';
-  src: url('The YearofHandicrafts-Regular.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-body{
-  margin:0;
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background-image:url("BackGround.jpg");
-  background-size:cover;
-  background-position:center;
-  font-family:sans-serif;
-}
-
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.25);
-  z-index:-1;
-}
-
-.wrapper{
-  width:min(620px,92vw);
-  background:rgba(255,255,255,0.08);
-  border-radius:20px;
-  padding:18px;
-  backdrop-filter:blur(10px);
-  box-shadow:0 25px 60px rgba(0,0,0,.3);
-  text-align:center;
-}
-
-canvas{
-  width:100%;
-  border-radius:16px;
-}
-
-.controls{
-  margin-top:14px;
-  display:flex;
-  gap:10px;
-  justify-content:center;
-  flex-wrap:wrap;
-}
-
-input{
-  padding:12px;
-  border-radius:10px;
-  border:none;
-  font-size:16px;
-  width:220px;
-}
-
-button{
-  padding:12px 18px;
-  border-radius:10px;
-  border:none;
-  cursor:pointer;
-  font-weight:700;
-  background:#fff;
-}
-
-</style>
-</head>
-
-<body>
-
-<div class="wrapper">
-  <canvas id="cardCanvas"></canvas>
-
-  <div class="controls">
-    <input id="nameInput" placeholder="اكتب اسمك">
-    <button onclick="generate()">عرض</button>
-    <button onclick="downloadImage()">تحميل الصورة</button>
-    <button onclick="shareWhatsApp()">مشاركة واتساب</button>
-  </div>
-</div>
-
 <script>
 const canvas = document.getElementById("cardCanvas");
 const ctx = canvas.getContext("2d");
 
-/* 🔥 اسم صورتك الجديد */
 const img = new Image();
 img.src = "RaCa.png";
 
-/* 📍 مكان الاسم فوق الخط */
-const NAME_Y_RATIO = 0.75
-;
+/* 📍 مكان الاسم (مضبوط على "اكتب اسمك") */
+const NAME_Y_RATIO = 0.80;
 
 /* حجم الخط */
-const MAX_FONT = 70;
-const MIN_FONT = 36;
+const MAX_FONT = 80;
+const MIN_FONT = 40;
 
 img.onload = () => {
   canvas.width = img.width;
@@ -135,22 +40,25 @@ function draw(name){
 
   ctx.textAlign="center";
   ctx.textBaseline="middle";
-  ctx.fillStyle="#0c3c78";
 
-  ctx.shadowColor="rgba(0,0,0,.3)";
-  ctx.shadowBlur=12;
-  ctx.shadowOffsetY=4;
+  /* 🔥 اللون أبيض */
+  ctx.fillStyle="#ffffff";
+
+  /* ظل خفيف عشان يوضح */
+  ctx.shadowColor="rgba(0,0,0,.4)";
+  ctx.shadowBlur=10;
+  ctx.shadowOffsetY=3;
 
   let size = MAX_FONT;
-  const maxWidth = canvas.width*0.78;
+  const maxWidth = canvas.width * 0.75;
 
-  while(size>=MIN_FONT){
-    ctx.font=`${size}px 'YearHandicrafts'`;
-    if(ctx.measureText(name).width<=maxWidth) break;
-    size-=2;
+  while(size >= MIN_FONT){
+    ctx.font = `${size}px 'YearHandicrafts'`;
+    if(ctx.measureText(name).width <= maxWidth) break;
+    size -= 2;
   }
 
-  ctx.fillText(name,canvas.width/2,canvas.height*NAME_Y_RATIO);
+  ctx.fillText(name, canvas.width/2, canvas.height * NAME_Y_RATIO);
 
   ctx.shadowColor="transparent";
 }
@@ -165,8 +73,9 @@ function downloadImage(){
   const name=document.getElementById("nameInput").value.trim();
   if(!name){ alert("اكتب الاسم أولاً"); return; }
   draw(name);
+
   const a=document.createElement("a");
-  a.download=`${name}-ramadan.png`;
+  a.download=`${name}-eid.png`;
   a.href=canvas.toDataURL("image/png");
   a.click();
 }
@@ -176,10 +85,7 @@ function shareWhatsApp(){
   if(!name){ alert("اكتب الاسم أولاً"); return; }
 
   const url = `${location.origin}${location.pathname}?name=${encodeURIComponent(name)}`;
-  const text = `رمضان مبارك 🌙✨\nشوف تهنئتك باسمك:\n${url}`;
+  const text = `عيدك مبارك 🎉\nشوف تهنئتك باسمك:\n${url}`;
   window.open(`https://wa.me/?text=${encodeURIComponent(text)}`,"_blank");
 }
 </script>
-
-</body>
-</html>
